@@ -22,20 +22,22 @@
   <div class="row g-4">
     <!-- Sidebar -->
     <div class="col-lg-3">
-      <div class="card border-0 shadow-sm">
-        <div class="card-header bg-primary text-white fw-bold">
-          <i class="bi bi-funnel me-2"></i>Категории
+      <div class="card">
+        <div class="card-header fw-bold" style="background:var(--surface);border-bottom:1px solid var(--border);color:var(--text-2);font-size:0.75rem;letter-spacing:2px;text-transform:uppercase">
+          <i class="bi bi-funnel me-2" style="color:var(--accent)"></i>Категории
         </div>
         <div class="list-group list-group-flush">
           <a href="{% url 'store:catalog' %}"
-             class="list-group-item list-group-item-action {% if not current_category %}active{% endif %}">
+             class="list-group-item list-group-item-action {% if not current_category %}active{% endif %}"
+             style="background:transparent;border-color:var(--border);color:{% if not current_category %}var(--accent){% else %}var(--text-2){% endif %}">
             <i class="bi bi-grid me-2"></i>Все товары
           </a>
           {% for cat in categories %}
           <a href="{% url 'store:catalog_category' cat.slug %}"
-             class="list-group-item list-group-item-action {% if current_category.slug == cat.slug %}active{% endif %}">
+             class="list-group-item list-group-item-action {% if current_category.slug == cat.slug %}active{% endif %}"
+             style="background:transparent;border-color:var(--border);color:{% if current_category.slug == cat.slug %}var(--accent){% else %}var(--text-2){% endif %}">
             <i class="bi {{ cat.icon }} me-2"></i>{{ cat.name }}
-            <span class="badge bg-secondary float-end">{{ cat.products.count }}</span>
+            <span class="badge float-end" style="background:var(--border-2);color:var(--text-3)">{{ cat.products.count }}</span>
           </a>
           {% endfor %}
         </div>

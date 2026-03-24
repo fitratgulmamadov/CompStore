@@ -22,8 +22,8 @@
         {% if pb.image %}
         <img src="{{ pb.image.url }}" class="card-img-top" alt="{{ pb.name }}" style="height:200px;object-fit:cover">
         {% else %}
-        <div class="d-flex align-items-center justify-content-center bg-dark" style="height:180px">
-          <i class="bi bi-pc-display-horizontal text-primary" style="font-size:5rem"></i>
+        <div class="d-flex align-items-center justify-content-center" style="height:180px;background:var(--surface)">
+          <i class="bi bi-pc-display-horizontal" style="font-size:5rem;color:rgba(229,0,26,0.25)"></i>
         </div>
         {% endif %}
         <div class="card-body d-flex flex-column">
@@ -43,7 +43,7 @@
             {% if pb.components.count > 4 %}<li class="text-muted">...ещё {{ pb.components.count|add:"-4" }} компонентов</li>{% endif %}
           </ul>
           <div class="d-flex align-items-center justify-content-between mt-auto">
-            <span class="fs-4 fw-bold text-primary">{{ pb.price|floatformat:0 }} <small class="fs-6">сомони</small></span>
+            <span class="fs-4 fw-bold" style="color:var(--accent)">{{ pb.price|floatformat:0 }} <small class="fs-6" style="color:var(--text-3)">сомони</small></span>
             <a href="{% url 'store:prebuilt_detail' pb.slug %}" class="btn btn-primary">Подробнее</a>
           </div>
         </div>

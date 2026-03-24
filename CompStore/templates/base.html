@@ -12,10 +12,10 @@
 <body>
 
 <!-- Navbar -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top shadow">
+<nav class="navbar navbar-expand-lg sticky-top">
   <div class="container">
-    <a class="navbar-brand fw-bold fs-4" href="{% url 'store:home' %}">
-      <i class="bi bi-cpu-fill text-primary me-2"></i>CompStore
+    <a class="navbar-brand" href="{% url 'store:home' %}">
+      <i class="bi bi-cpu-fill brand-icon"></i>COMPSTORE
     </a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
       <span class="navbar-toggler-icon"></span>
@@ -23,27 +23,29 @@
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav me-auto">
         <li class="nav-item">
-          <a class="nav-link" href="{% url 'store:catalog' %}"><i class="bi bi-grid me-1"></i>Каталог</a>
+          <a class="nav-link" href="{% url 'store:catalog' %}">Каталог</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="{% url 'store:prebuilts' %}"><i class="bi bi-pc-display me-1"></i>Готовые сборки</a>
+          <a class="nav-link" href="{% url 'store:prebuilts' %}">Готовые сборки</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="{% url 'store:builder' %}"><i class="bi bi-tools me-1"></i>Конфигуратор</a>
+          <a class="nav-link" href="{% url 'store:builder' %}">Конфигуратор</a>
         </li>
       </ul>
       <form class="d-flex me-3" action="{% url 'store:search' %}" method="get">
-        <div class="input-group">
-          <input class="form-control form-control-sm" type="search" name="q" placeholder="Поиск товаров..." style="width:220px">
-          <button class="btn btn-primary btn-sm" type="submit"><i class="bi bi-search"></i></button>
+        <div class="input-group input-group-sm">
+          <input class="form-control" type="search" name="q" placeholder="Поиск..." style="width:200px">
+          <button class="btn btn-primary" type="submit"><i class="bi bi-search"></i></button>
         </div>
       </form>
-      <a class="btn btn-outline-light position-relative" href="{% url 'store:cart' %}">
-        <i class="bi bi-cart3"></i>
+      <a class="cart-btn position-relative" href="{% url 'store:cart' %}">
+        <i class="bi bi-bag"></i>
+        <span>Корзина</span>
         {% if cart and cart.total_items %}
-          <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-            {{ cart.total_items }}
-          </span>
+        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill"
+              style="background:var(--accent);font-size:0.65rem">
+          {{ cart.total_items }}
+        </span>
         {% endif %}
       </a>
     </div>
@@ -62,38 +64,39 @@
 </div>
 {% endif %}
 
-<!-- Content -->
-<main>
-  {% block content %}{% endblock %}
-</main>
+<main>{% block content %}{% endblock %}</main>
 
 <!-- Footer -->
-<footer class="bg-dark text-light mt-5 py-4">
+<footer class="mt-5 py-5">
   <div class="container">
-    <div class="row g-4">
+    <div class="row g-4 mb-4">
       <div class="col-md-4">
-        <h5 class="fw-bold"><i class="bi bi-cpu-fill text-primary me-2"></i>CompStore</h5>
-        <p class="text-muted small">Магазин компьютерных комплектующих. Большой выбор, доступные цены, быстрая доставка.</p>
+        <div class="navbar-brand mb-3 d-block" style="font-size:1.2rem;font-weight:800;letter-spacing:-0.5px;text-decoration:none">
+          <i class="bi bi-cpu-fill" style="color:var(--accent);margin-right:6px"></i>COMPSTORE
+        </div>
+        <p style="color:var(--text-3);font-size:0.85rem;line-height:1.7">
+          Магазин компьютерных комплектующих.<br>Большой выбор, доступные цены.
+        </p>
       </div>
       <div class="col-md-4">
-        <h6 class="fw-bold">Навигация</h6>
-        <ul class="list-unstyled small">
-          <li><a href="{% url 'store:catalog' %}" class="text-muted text-decoration-none">Каталог</a></li>
-          <li><a href="{% url 'store:prebuilts' %}" class="text-muted text-decoration-none">Готовые сборки</a></li>
-          <li><a href="{% url 'store:builder' %}" class="text-muted text-decoration-none">Конфигуратор ПК</a></li>
+        <h6 class="fw-bold mb-3" style="font-size:0.75rem;letter-spacing:2px;text-transform:uppercase;color:var(--text-3)">Навигация</h6>
+        <ul class="list-unstyled mb-0" style="font-size:0.875rem">
+          <li class="mb-2"><a href="{% url 'store:catalog' %}" class="text-muted text-decoration-none">Каталог</a></li>
+          <li class="mb-2"><a href="{% url 'store:prebuilts' %}" class="text-muted text-decoration-none">Готовые сборки</a></li>
+          <li class="mb-2"><a href="{% url 'store:builder' %}" class="text-muted text-decoration-none">Конфигуратор ПК</a></li>
         </ul>
       </div>
       <div class="col-md-4">
-        <h6 class="fw-bold">Контакты</h6>
-        <ul class="list-unstyled small text-muted">
-          <li><i class="bi bi-telephone me-2"></i>+998 90 000 00 00</li>
-          <li><i class="bi bi-envelope me-2"></i>info@compstore.uz</li>
-          <li><i class="bi bi-geo-alt me-2"></i>Ташкент, Узбекистан</li>
+        <h6 class="fw-bold mb-3" style="font-size:0.75rem;letter-spacing:2px;text-transform:uppercase;color:var(--text-3)">Контакты</h6>
+        <ul class="list-unstyled mb-0" style="font-size:0.875rem;color:var(--text-3)">
+          <li class="mb-2"><i class="bi bi-telephone me-2" style="color:var(--accent)"></i>+992 90 000 00 00</li>
+          <li class="mb-2"><i class="bi bi-envelope me-2" style="color:var(--accent)"></i>info@compstore.tj</li>
+          <li class="mb-2"><i class="bi bi-geo-alt me-2" style="color:var(--accent)"></i>Душанбе, Таджикистан</li>
         </ul>
       </div>
     </div>
-    <hr class="border-secondary">
-    <p class="text-center text-muted small mb-0">© 2024 CompStore. Все права защищены.</p>
+    <hr>
+    <p class="text-center mb-0" style="font-size:0.8rem;color:var(--text-3)">© 2025 CompStore. Все права защищены.</p>
   </div>
 </footer>
 

@@ -1,19 +1,22 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}CompStore — Компьютерные комплектующие в Ташкенте{% endblock %}
+{% block title %}CompStore — Компьютерные комплектующие{% endblock %}
 
 {% block content %}
-<!-- Hero Banner -->
+
+<!-- Hero -->
 <section class="hero-section">
-  <div class="container py-5">
-    <div class="row align-items-center">
+  <div class="container">
+    <div class="row align-items-center g-4">
       <div class="col-lg-7">
-        <h1 class="display-4 fw-bold text-white mb-3">
-          Собери свой идеальный ПК
+        <div class="hero-tag">Лучшие цены в Таджикистане</div>
+        <h1 class="hero-title">
+          Собери свой<br>идеальный <span class="accent">ПК</span>
         </h1>
-        <p class="lead text-white-50 mb-4">
-          Большой выбор комплектующих, готовые сборки и онлайн конфигуратор. Лучшие цены в Ташкенте.
+        <p class="hero-subtitle">
+          Большой выбор комплектующих, готовые сборки и онлайн конфигуратор.
+          Совместимость гарантирована.
         </p>
         <div class="d-flex gap-3 flex-wrap">
           <a href="{% url 'store:builder' %}" class="btn btn-primary btn-lg px-4">
@@ -24,25 +27,69 @@
           </a>
         </div>
       </div>
-      <div class="col-lg-5 text-center d-none d-lg-block">
-        <i class="bi bi-pc-display-horizontal hero-icon"></i>
+      <div class="col-lg-5 d-none d-lg-block">
+        <div class="hero-icon-wrap">
+          <i class="bi bi-pc-display-horizontal hero-icon"></i>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- Categories -->
-<section class="py-5 bg-light">
+<!-- Features strip -->
+<div class="features-strip">
   <div class="container">
-    <h2 class="fw-bold text-center mb-4">Категории товаров</h2>
+    <div class="row g-0">
+      <div class="col-6 col-md-3">
+        <div class="feature-item" style="border-right:1px solid var(--border)">
+          <i class="bi bi-truck"></i>
+          <h6>Быстрая доставка</h6>
+          <p>По всему Таджикистану</p>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="feature-item" style="border-right:1px solid var(--border)">
+          <i class="bi bi-shield-check"></i>
+          <h6>Гарантия качества</h6>
+          <p>Официальная гарантия</p>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="feature-item" style="border-right:1px solid var(--border)">
+          <i class="bi bi-headset"></i>
+          <h6>Техподдержка</h6>
+          <p>Помощь в выборе ПК</p>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="feature-item">
+          <i class="bi bi-arrow-return-left"></i>
+          <h6>Возврат 14 дней</h6>
+          <p>Если не подошло</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Categories -->
+<section class="py-5">
+  <div class="container">
+    <div class="d-flex justify-content-between align-items-end mb-4">
+      <div>
+        <div class="section-label">Ассортимент</div>
+        <h2 class="section-title mb-0">Категории товаров</h2>
+      </div>
+      <a href="{% url 'store:catalog' %}" class="btn btn-outline-primary btn-sm">Весь каталог</a>
+    </div>
     <div class="row g-3 justify-content-center">
       {% for cat in categories %}
       <div class="col-6 col-sm-4 col-md-3 col-lg-2">
         <a href="{% url 'store:catalog_category' cat.slug %}" class="text-decoration-none">
-          <div class="card category-card text-center h-100 border-0 shadow-sm">
+          <div class="card category-card text-center h-100">
             <div class="card-body py-4">
               <i class="bi {{ cat.icon }} fs-1 text-primary mb-2 d-block"></i>
-              <small class="fw-semibold text-dark">{{ cat.name }}</small>
+              <small class="fw-semibold">{{ cat.name }}</small>
             </div>
           </div>
         </a>
@@ -54,10 +101,13 @@
 
 <!-- Featured Products -->
 {% if featured_products %}
-<section class="py-5">
+<section class="py-5" style="background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
   <div class="container">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-      <h2 class="fw-bold mb-0">Популярные товары</h2>
+    <div class="d-flex justify-content-between align-items-end mb-4">
+      <div>
+        <div class="section-label">Хиты продаж</div>
+        <h2 class="section-title mb-0">Популярные товары</h2>
+      </div>
       <a href="{% url 'store:catalog' %}" class="btn btn-outline-primary btn-sm">Все товары</a>
     </div>
     <div class="row g-3">
@@ -73,34 +123,44 @@
 
 <!-- Prebuilts Banner -->
 {% if featured_prebuilts %}
-<section class="py-5 bg-dark text-white">
+<section class="py-5">
   <div class="container">
-    <div class="text-center mb-4">
-      <h2 class="fw-bold">Готовые сборки</h2>
-      <p class="text-muted">Протестированные конфигурации для любых задач</p>
+    <div class="text-center mb-5">
+      <div class="section-label">Под ключ</div>
+      <h2 class="section-title">Готовые сборки ПК</h2>
+      <p style="color:var(--text-3);font-size:0.9rem;margin-top:8px">Протестированные конфигурации для любых задач и бюджетов</p>
     </div>
     <div class="row g-4 justify-content-center">
       {% for pb in featured_prebuilts %}
       <div class="col-md-4">
-        <div class="card bg-secondary border-0 h-100">
-          <div class="card-body text-center p-4">
-            <div class="level-badge mb-3">
-              {% if pb.level == 'budget' %}<span class="badge bg-success fs-6">Бюджетный</span>
-              {% elif pb.level == 'mid' %}<span class="badge bg-info fs-6">Средний</span>
-              {% elif pb.level == 'high' %}<span class="badge bg-warning text-dark fs-6">Высокий</span>
-              {% else %}<span class="badge bg-danger fs-6">Топовый</span>{% endif %}
+        <div class="card prebuilt-card h-100">
+          {% if pb.image %}
+          <img src="{{ pb.image.url }}" class="card-img-top" alt="{{ pb.name }}" style="height:200px;object-fit:cover">
+          {% else %}
+          <div class="d-flex align-items-center justify-content-center" style="height:180px;background:var(--surface)">
+            <i class="bi bi-pc-display-horizontal" style="font-size:5rem;color:rgba(229,0,26,0.25)"></i>
+          </div>
+          {% endif %}
+          <div class="card-body d-flex flex-column p-4">
+            <div class="mb-2">
+              {% if pb.level == 'budget' %}<span class="badge bg-success">Бюджетный</span>
+              {% elif pb.level == 'mid' %}<span class="badge bg-info">Средний</span>
+              {% elif pb.level == 'high' %}<span class="badge bg-warning text-dark">Высокий</span>
+              {% else %}<span class="badge bg-primary">Топовый</span>{% endif %}
             </div>
-            <h5 class="fw-bold text-white">{{ pb.name }}</h5>
-            <p class="text-muted small">{{ pb.description|truncatechars:80 }}</p>
-            <p class="fs-4 fw-bold text-primary">{{ pb.price|floatformat:0 }} сомони</p>
-            <a href="{% url 'store:prebuilt_detail' pb.slug %}" class="btn btn-primary w-100">Подробнее</a>
+            <h5 class="fw-bold mb-2">{{ pb.name }}</h5>
+            <p class="small flex-grow-1" style="color:var(--text-3)">{{ pb.description|truncatechars:80 }}</p>
+            <div class="d-flex align-items-center justify-content-between mt-3">
+              <span class="fw-bold" style="font-size:1.25rem;color:var(--accent)">{{ pb.price|floatformat:0 }} <small style="font-size:0.75rem;color:var(--text-3)">сомони</small></span>
+              <a href="{% url 'store:prebuilt_detail' pb.slug %}" class="btn btn-primary btn-sm px-3">Подробнее</a>
+            </div>
           </div>
         </div>
       </div>
       {% endfor %}
     </div>
     <div class="text-center mt-4">
-      <a href="{% url 'store:prebuilts' %}" class="btn btn-outline-light">Все сборки</a>
+      <a href="{% url 'store:prebuilts' %}" class="btn btn-outline-primary px-4">Все сборки</a>
     </div>
   </div>
 </section>
@@ -108,10 +168,13 @@
 
 <!-- New Products -->
 {% if new_products %}
-<section class="py-5 bg-light">
+<section class="py-5" style="background:var(--surface);border-top:1px solid var(--border)">
   <div class="container">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-      <h2 class="fw-bold mb-0">Новинки</h2>
+    <div class="d-flex justify-content-between align-items-end mb-4">
+      <div>
+        <div class="section-label">Только появились</div>
+        <h2 class="section-title mb-0">Новинки</h2>
+      </div>
       <a href="{% url 'store:catalog' %}?sort=-created_at" class="btn btn-outline-primary btn-sm">Все новинки</a>
     </div>
     <div class="row g-3">
@@ -125,31 +188,4 @@
 </section>
 {% endif %}
 
-<!-- Features -->
-<section class="py-5">
-  <div class="container">
-    <div class="row g-4 text-center">
-      <div class="col-md-3">
-        <i class="bi bi-truck fs-1 text-primary mb-3 d-block"></i>
-        <h6 class="fw-bold">Быстрая доставка</h6>
-        <p class="text-muted small">Доставка по всему Узбекистану</p>
-      </div>
-      <div class="col-md-3">
-        <i class="bi bi-shield-check fs-1 text-success mb-3 d-block"></i>
-        <h6 class="fw-bold">Гарантия качества</h6>
-        <p class="text-muted small">Все товары с официальной гарантией</p>
-      </div>
-      <div class="col-md-3">
-        <i class="bi bi-headset fs-1 text-info mb-3 d-block"></i>
-        <h6 class="fw-bold">Техподдержка</h6>
-        <p class="text-muted small">Помощь в выборе и сборке ПК</p>
-      </div>
-      <div class="col-md-3">
-        <i class="bi bi-arrow-return-left fs-1 text-warning mb-3 d-block"></i>
-        <h6 class="fw-bold">Возврат 14 дней</h6>
-        <p class="text-muted small">Если что-то не подошло</p>
-      </div>
-    </div>
-  </div>
-</section>
 {% endblock %}

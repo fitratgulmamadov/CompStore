@@ -17,11 +17,11 @@
   <div class="row g-4">
     <!-- Image -->
     <div class="col-md-5">
-      <div class="card border-0 shadow-sm">
+      <div class="card">
         {% if product.image %}
         <img src="{{ product.image.url }}" class="card-img-top p-3" alt="{{ product.name }}" style="max-height:400px;object-fit:contain">
         {% else %}
-        <div class="d-flex align-items-center justify-content-center bg-light rounded" style="height:350px">
+        <div class="d-flex align-items-center justify-content-center rounded" style="height:350px;background:var(--surface)">
           <i class="bi {{ product.category.icon }} text-muted" style="font-size:6rem"></i>
         </div>
         {% endif %}
@@ -35,7 +35,7 @@
       <p class="text-muted mb-3">Бренд: <strong>{{ product.brand }}</strong></p>
 
       <div class="mb-3">
-        <span class="fs-2 fw-bold text-primary">{{ product.price|floatformat:0 }} сомони</span>
+        <span class="fs-2 fw-bold" style="color:var(--accent)">{{ product.price|floatformat:0 }} сомони</span>
         {% if product.old_price %}
         <span class="fs-5 text-muted text-decoration-line-through ms-2">{{ product.old_price|floatformat:0 }} сомони</span>
         <span class="badge bg-danger ms-2">-{{ product.discount_percent }}%</span>
@@ -73,8 +73,8 @@
 
       <!-- Specs -->
       {% if product.specs %}
-      <div class="card border-0 bg-light">
-        <div class="card-header bg-transparent fw-bold border-0 pb-0">
+      <div class="card">
+        <div class="card-header fw-bold" style="background:var(--surface);border-bottom:1px solid var(--border);font-size:0.75rem;letter-spacing:2px;text-transform:uppercase;color:var(--text-2)">
           <i class="bi bi-list-ul me-2"></i>Характеристики
         </div>
         <div class="card-body">
