@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% block title %}Готовые сборки — CompStore{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <h2 class="fw-bold mb-1">Готовые сборки ПК</h2>
+  <p class="text-muted mb-4">Протестированные конфигурации для любых задач и бюджетов</p>
+
+  <!-- Filter by level -->
+  <div class="d-flex gap-2 mb-4 flex-wrap">
+    <a href="{% url 'store:prebuilts' %}" class="btn btn-sm {% if not current_level %}btn-primary{% else %}btn-outline-secondary{% endif %}">Все</a>
+    {% for val, label in level_choices %}
+    <a href="?level={{ val }}" class="btn btn-sm {% if current_level == val %}btn-primary{% else %}btn-outline-secondary{% endif %}">{{ label }}</a>
+    {% endfor %}
+  </div>
+
+  {% if prebuilts %}
+  <div class="row g-4">
+    {% for pb in prebuilts %}
+    <div class="col-md-6 col-lg-4">
+      <div class="card prebuilt-card h-100 border-0 shadow-sm">
+        {% if pb.image %}
+        <img src="{{ pb.image.url }}" class="card-img-top" alt="{{ pb.name }}" style="height:200px;object-fit:cover">
+        {% else %}
+        <div class="d-flex align-items-center justify-content-center bg-dark" style="height:180px">
+          <i class="bi bi-pc-display-horizontal text-primary" style="font-size:5rem"></i>
+        </div>
+        {% endif %}
+        <div class="card-body d-flex flex-column">
+          <div class="mb-2">
+            {% if pb.level == 'budget' %}<span class="badge bg-success">Бюджетный</span>
+            {% elif pb.level == 'mid' %}<span class="badge bg-info">Средний</span>
+            {% elif pb.level == 'high' %}<span class="badge bg-warning text-dark">Высокий</span>
+            {% else %}<span class="badge bg-danger">Топовый</span>{% endif %}
+          </div>
+          <h5 class="fw-bold">{{ pb.name }}</h5>
+          <p class="text-muted small flex-grow-1">{{ pb.description|truncatechars:100 }}</p>
+          <!-- Brief specs list -->
+          <ul class="list-unstyled small text-muted mb-3">
+            {% for comp in pb.prebuiltcomponent_set.all|slice:":4" %}
+            <li><i class="bi bi-check text-success me-1"></i>{{ comp.product.name }}</li>
+            {% endfor %}
+            {% if pb.components.count > 4 %}<li class="text-muted">...ещё {{ pb.components.count|add:"-4" }} компонентов</li>{% endif %}
+          </ul>
+          <div class="d-flex align-items-center justify-content-between mt-auto">
+            <span class="fs-4 fw-bold text-primary">{{ pb.price|floatformat:0 }} <small class="fs-6">сомони</small></span>
+            <a href="{% url 'store:prebuilt_detail' pb.slug %}" class="btn btn-primary">Подробнее</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="text-center py-5">
+    <i class="bi bi-pc-display fs-1 text-muted"></i>
+    <p class="text-muted mt-3">Сборки не найдены</p>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

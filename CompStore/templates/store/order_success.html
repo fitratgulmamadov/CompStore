@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block title %}Заказ оформлен — CompStore{% endblock %}
+
+{% block content %}
+<div class="container py-5 text-center">
+  <div class="py-4">
+    <i class="bi bi-check-circle-fill text-success" style="font-size:5rem"></i>
+    <h1 class="fw-bold mt-4">Заказ оформлен!</h1>
+    <p class="lead text-muted">Спасибо, {{ order.first_name }}! Ваш заказ #{{ order.id }} принят.</p>
+    <p class="text-muted">Мы свяжемся с вами по номеру телефона для подтверждения доставки.</p>
+
+    <div class="card border-0 shadow-sm mx-auto mt-4" style="max-width:500px">
+      <div class="card-body">
+        <table class="table table-sm text-start">
+          <tr><td class="text-muted">Номер заказа:</td><td class="fw-bold">#{{ order.id }}</td></tr>
+          <tr><td class="text-muted">Имя:</td><td>{{ order.first_name }} {{ order.last_name }}</td></tr>
+          <tr><td class="text-muted">Email:</td><td>{{ order.email }}</td></tr>
+          <tr><td class="text-muted">Телефон:</td><td>{{ order.phone }}</td></tr>
+          <tr><td class="text-muted">Город:</td><td>{{ order.city }}</td></tr>
+          <tr><td class="text-muted">Сумма:</td><td class="fw-bold text-primary">{{ order.total|floatformat:0 }} сомони</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="mt-4 d-flex gap-3 justify-content-center">
+      <a href="{% url 'store:home' %}" class="btn btn-primary btn-lg">
+        <i class="bi bi-house me-2"></i>На главную
+      </a>
+      <a href="{% url 'store:catalog' %}" class="btn btn-outline-primary btn-lg">
+        <i class="bi bi-grid me-2"></i>Продолжить покупки
+      </a>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% block title %}{{ prebuilt.name }} — CompStore{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="{% url 'store:home' %}">Главная</a></li>
+      <li class="breadcrumb-item"><a href="{% url 'store:prebuilts' %}">Готовые сборки</a></li>
+      <li class="breadcrumb-item active">{{ prebuilt.name }}</li>
+    </ol>
+  </nav>
+
+  <div class="row g-4">
+    <div class="col-md-5">
+      {% if prebuilt.image %}
+      <img src="{{ prebuilt.image.url }}" class="img-fluid rounded shadow" alt="{{ prebuilt.name }}">
+      {% else %}
+      <div class="d-flex align-items-center justify-content-center bg-dark rounded shadow" style="height:350px">
+        <i class="bi bi-pc-display-horizontal text-primary" style="font-size:7rem"></i>
+      </div>
+      {% endif %}
+    </div>
+    <div class="col-md-7">
+      <div class="mb-2">
+        {% if prebuilt.level == 'budget' %}<span class="badge bg-success fs-6">Бюджетный</span>
+        {% elif prebuilt.level == 'mid' %}<span class="badge bg-info fs-6">Средний</span>
+        {% elif prebuilt.level == 'high' %}<span class="badge bg-warning text-dark fs-6">Высокий</span>
+        {% else %}<span class="badge bg-danger fs-6">Топовый</span>{% endif %}
+      </div>
+      <h1 class="fw-bold">{{ prebuilt.name }}</h1>
+      <p class="text-muted">{{ prebuilt.description }}</p>
+
+      <h2 class="fw-bold text-primary mb-4">{{ prebuilt.price|floatformat:0 }} сомони</h2>
+
+      <form action="{% url 'store:cart_add' %}" method="post" class="mb-4">
+        {% csrf_token %}
+        <input type="hidden" name="prebuilt_id" value="{{ prebuilt.id }}">
+        <input type="hidden" name="next" value="{{ request.path }}">
+        <button type="submit" class="btn btn-primary btn-lg px-5">
+          <i class="bi bi-cart-plus me-2"></i>В корзину
+        </button>
+      </form>
+
+      <!-- Components Table -->
+      <h5 class="fw-bold mb-3">Состав сборки</h5>
+      <div class="card border-0 shadow-sm">
+        <table class="table table-hover mb-0">
+          <thead class="table-dark">
+            <tr>
+              <th>Категория</th>
+              <th>Компонент</th>
+              <th class="text-end">Цена</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in components %}
+            <tr>
+              <td><small class="text-muted">{{ item.product.category.name }}</small></td>
+              <td>
+                <a href="{% url 'store:product_detail' item.product.slug %}" class="text-decoration-none">
+                  {{ item.product.name }}
+                </a>
+                {% if item.quantity > 1 %}<span class="badge bg-secondary ms-1">×{{ item.quantity }}</span>{% endif %}
+              </td>
+              <td class="text-end">{{ item.product.price|floatformat:0 }} сомони</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+          <tfoot class="table-light">
+            <tr>
+              <th colspan="2">Итого (сборка)</th>
+              <th class="text-end text-primary">{{ prebuilt.price|floatformat:0 }} сомони</th>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

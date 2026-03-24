@@ -1,0 +1,140 @@
+/* ========== Hero ========== */
+.hero-section {
+  background: linear-gradient(135deg, #0d1117 0%, #161b22 50%, #1a2332 100%);
+  padding: 80px 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-section::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -10%;
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(13, 110, 253, 0.15) 0%, transparent 70%);
+  border-radius: 50%;
+}
+
+.hero-icon {
+  font-size: 12rem;
+  color: rgba(13, 110, 253, 0.3);
+  filter: drop-shadow(0 0 30px rgba(13, 110, 253, 0.4));
+}
+
+/* ========== Product Card ========== */
+.product-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.product-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.12) !important;
+}
+
+.product-img {
+  height: 180px;
+  object-fit: contain;
+  padding: 16px;
+  background: #f8f9fa;
+}
+
+.product-img-placeholder {
+  height: 180px;
+}
+
+/* ========== Category Card ========== */
+.category-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border-radius: 12px;
+}
+
+.category-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.1) !important;
+}
+
+/* ========== Prebuilt Card ========== */
+.prebuilt-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.prebuilt-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.15) !important;
+}
+
+/* ========== Builder ========== */
+.builder-slot {
+  transition: background-color 0.15s;
+}
+
+.builder-slot:hover {
+  background-color: #f8f9fa;
+}
+
+.slot-icon {
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.hover-card {
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.hover-card:hover {
+  border-color: #0d6efd !important;
+  box-shadow: 0 2px 8px rgba(13,110,253,0.15);
+}
+
+/* ========== Navbar ========== */
+.navbar {
+  padding: 12px 0;
+}
+
+/* ========== General ========== */
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color: #212529;
+}
+
+.breadcrumb-item a {
+  text-decoration: none;
+  color: #0d6efd;
+}
+
+/* Smooth alerts */
+.alert {
+  border: none;
+  border-radius: 8px;
+}
+
+/* Buttons */
+.btn {
+  border-radius: 8px;
+  font-weight: 500;
+}
+
+/* Cards */
+.card {
+  border-radius: 12px;
+}
+
+/* Table */
+.table td, .table th {
+  vertical-align: middle;
+}
+
+/* Sticky top z-index fix */
+.sticky-top {
+  z-index: 100;
+}

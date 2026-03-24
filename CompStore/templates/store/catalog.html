@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+  {% if current_category %}{{ current_category.name }}{% else %}Каталог{% endif %} — CompStore
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="{% url 'store:home' %}">Главная</a></li>
+      <li class="breadcrumb-item {% if not current_category %}active{% endif %}">
+        <a href="{% url 'store:catalog' %}">Каталог</a>
+      </li>
+      {% if current_category %}
+      <li class="breadcrumb-item active">{{ current_category.name }}</li>
+      {% endif %}
+    </ol>
+  </nav>
+
+  <div class="row g-4">
+    <!-- Sidebar -->
+    <div class="col-lg-3">
+      <div class="card border-0 shadow-sm">
+        <div class="card-header bg-primary text-white fw-bold">
+          <i class="bi bi-funnel me-2"></i>Категории
+        </div>
+        <div class="list-group list-group-flush">
+          <a href="{% url 'store:catalog' %}"
+             class="list-group-item list-group-item-action {% if not current_category %}active{% endif %}">
+            <i class="bi bi-grid me-2"></i>Все товары
+          </a>
+          {% for cat in categories %}
+          <a href="{% url 'store:catalog_category' cat.slug %}"
+             class="list-group-item list-group-item-action {% if current_category.slug == cat.slug %}active{% endif %}">
+            <i class="bi {{ cat.icon }} me-2"></i>{{ cat.name }}
+            <span class="badge bg-secondary float-end">{{ cat.products.count }}</span>
+          </a>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Products -->
+    <div class="col-lg-9">
+      <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+        <h4 class="fw-bold mb-0">
+          {% if current_category %}{{ current_category.name }}{% else %}Все товары{% endif %}
+          <small class="text-muted fs-6">({{ products|length }} шт.)</small>
+        </h4>
+        <div class="d-flex align-items-center gap-2">
+          <label class="text-muted small me-1">Сортировка:</label>
+          <select class="form-select form-select-sm" style="width:auto" onchange="window.location=this.value">
+            <option value="?sort=-created_at" {% if current_sort == '-created_at' %}selected{% endif %}>Новинки</option>
+            <option value="?sort=price_asc" {% if current_sort == 'price_asc' %}selected{% endif %}>Цена ↑</option>
+            <option value="?sort=price_desc" {% if current_sort == 'price_desc' %}selected{% endif %}>Цена ↓</option>
+            <option value="?sort=name" {% if current_sort == 'name' %}selected{% endif %}>По названию</option>
+          </select>
+        </div>
+      </div>
+
+      {% if products %}
+      <div class="row g-3">
+        {% for product in products %}
+        <div class="col-6 col-md-4 col-xl-4">
+          {% include 'store/partials/product_card.html' %}
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div class="text-center py-5">
+        <i class="bi bi-inbox fs-1 text-muted"></i>
+        <p class="text-muted mt-3">Товары не найдены</p>
+        <a href="{% url 'store:catalog' %}" class="btn btn-primary">Все товары</a>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

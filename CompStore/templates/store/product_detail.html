@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ product.name }} — CompStore{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="{% url 'store:home' %}">Главная</a></li>
+      <li class="breadcrumb-item"><a href="{% url 'store:catalog' %}">Каталог</a></li>
+      <li class="breadcrumb-item"><a href="{% url 'store:catalog_category' product.category.slug %}">{{ product.category.name }}</a></li>
+      <li class="breadcrumb-item active">{{ product.name }}</li>
+    </ol>
+  </nav>
+
+  <div class="row g-4">
+    <!-- Image -->
+    <div class="col-md-5">
+      <div class="card border-0 shadow-sm">
+        {% if product.image %}
+        <img src="{{ product.image.url }}" class="card-img-top p-3" alt="{{ product.name }}" style="max-height:400px;object-fit:contain">
+        {% else %}
+        <div class="d-flex align-items-center justify-content-center bg-light rounded" style="height:350px">
+          <i class="bi {{ product.category.icon }} text-muted" style="font-size:6rem"></i>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Info -->
+    <div class="col-md-7">
+      <span class="badge bg-primary mb-2">{{ product.category.name }}</span>
+      <h1 class="h2 fw-bold mb-1">{{ product.name }}</h1>
+      <p class="text-muted mb-3">Бренд: <strong>{{ product.brand }}</strong></p>
+
+      <div class="mb-3">
+        <span class="fs-2 fw-bold text-primary">{{ product.price|floatformat:0 }} сомони</span>
+        {% if product.old_price %}
+        <span class="fs-5 text-muted text-decoration-line-through ms-2">{{ product.old_price|floatformat:0 }} сомони</span>
+        <span class="badge bg-danger ms-2">-{{ product.discount_percent }}%</span>
+        {% endif %}
+      </div>
+
+      {% if product.stock > 0 %}
+      <p class="text-success mb-3"><i class="bi bi-check-circle me-1"></i>В наличии ({{ product.stock }} шт.)</p>
+      {% else %}
+      <p class="text-danger mb-3"><i class="bi bi-x-circle me-1"></i>Нет в наличии</p>
+      {% endif %}
+
+      <form action="{% url 'store:cart_add' %}" method="post" class="mb-4">
+        {% csrf_token %}
+        <input type="hidden" name="product_id" value="{{ product.id }}">
+        <input type="hidden" name="next" value="{{ request.path }}">
+        <div class="d-flex gap-2 align-items-center">
+          <div class="input-group" style="width:130px">
+            <button type="button" class="btn btn-outline-secondary" onclick="changeQty(-1)">-</button>
+            <input type="number" name="quantity" id="qty" value="1" min="1" max="{{ product.stock }}" class="form-control text-center">
+            <button type="button" class="btn btn-outline-secondary" onclick="changeQty(1)">+</button>
+          </div>
+          <button type="submit" class="btn btn-primary px-4" {% if not product.stock %}disabled{% endif %}>
+            <i class="bi bi-cart-plus me-2"></i>В корзину
+          </button>
+        </div>
+      </form>
+
+      {% if product.description %}
+      <div class="mb-4">
+        <h5 class="fw-bold">Описание</h5>
+        <p class="text-muted">{{ product.description }}</p>
+      </div>
+      {% endif %}
+
+      <!-- Specs -->
+      {% if product.specs %}
+      <div class="card border-0 bg-light">
+        <div class="card-header bg-transparent fw-bold border-0 pb-0">
+          <i class="bi bi-list-ul me-2"></i>Характеристики
+        </div>
+        <div class="card-body">
+          <table class="table table-sm table-borderless mb-0">
+            {% for key, value in product.specs.items %}
+            <tr>
+              <td class="text-muted fw-semibold" style="width:40%">{{ key }}</td>
+              <td>{{ value }}</td>
+            </tr>
+            {% endfor %}
+          </table>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Related -->
+  {% if related %}
+  <div class="mt-5">
+    <h4 class="fw-bold mb-3">Похожие товары</h4>
+    <div class="row g-3">
+      {% for p in related %}
+      <div class="col-6 col-md-3">
+        {% with product=p %}
+        {% include 'store/partials/product_card.html' %}
+        {% endwith %}
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+</div>
+
+{% block extra_js %}
+<script>
+function changeQty(delta) {
+  const input = document.getElementById('qty');
+  const val = parseInt(input.value) + delta;
+  const max = parseInt(input.max);
+  if (val >= 1 && val <= max) input.value = val;
+}
+</script>
+{% endblock %}
+{% endblock %}
