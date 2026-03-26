@@ -251,7 +251,7 @@ class Command(BaseCommand):
         for data in products_data:
             cat = cats[data['cat']]
             name = data['name']
-            prod, created = Product.objects.get_or_create(
+            prod, created = Product.objects.update_or_create(
                 name=name,
                 defaults={
                     'category': cat,
