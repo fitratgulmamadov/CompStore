@@ -31,7 +31,8 @@ class ProductAdmin(admin.ModelAdmin):
     fieldsets = (
         (None, {'fields': ('category', 'name', 'slug', 'brand', 'image')}),
         ('Цены и наличие', {'fields': ('price', 'old_price', 'stock', 'is_featured')}),
-        ('Описание', {'fields': ('description', 'specs', 'socket')}),
+        ('Совместимость', {'fields': ('socket', 'ram_type')}),
+        ('Описание', {'fields': ('description', 'specs')}),
     )
 
 
