@@ -1,5 +1,11 @@
 from django.contrib import admin
-from .models import Category, Product, PrebuiltPC, PrebuiltComponent, Cart, CartItem, Order, OrderItem
+from .models import Category, Product, PrebuiltPC, PrebuiltComponent, Cart, CartItem, Order, OrderItem, PrebuiltLevel
+
+
+@admin.register(PrebuiltLevel)
+class PrebuiltLevelAdmin(admin.ModelAdmin):
+    list_display = ('name', 'color', 'order')
+    list_editable = ('color', 'order')
 
 
 @admin.register(Category)

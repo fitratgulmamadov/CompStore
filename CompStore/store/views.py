@@ -5,7 +5,7 @@ from django.contrib import messages
 from django.db.models import Q
 import json
 
-from .models import Category, Product, PrebuiltPC, Cart, CartItem, Order, OrderItem
+from .models import Category, Product, PrebuiltPC, PrebuiltLevel, Cart, CartItem, Order, OrderItem
 
 
 def get_or_create_cart(request):
@@ -71,11 +71,11 @@ def prebuilts(request):
     level = request.GET.get('level', '')
     prebuilt_list = PrebuiltPC.objects.prefetch_related('components')
     if level:
-        prebuilt_list = prebuilt_list.filter(level=level)
+        prebuilt_list = prebuilt_list.filter(level_id=level)
     context = {
         'prebuilts': prebuilt_list,
         'current_level': level,
-        'level_choices': PrebuiltPC.LEVEL_CHOICES,
+        'level_choices': PrebuiltLevel.objects.all(),
     }
     return render(request, 'store/prebuilts.html', context)
 

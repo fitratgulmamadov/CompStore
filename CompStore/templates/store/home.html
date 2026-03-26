@@ -143,10 +143,7 @@
           {% endif %}
           <div class="card-body d-flex flex-column p-4">
             <div class="mb-2">
-              {% if pb.level == 'budget' %}<span class="badge bg-success">Бюджетный</span>
-              {% elif pb.level == 'mid' %}<span class="badge bg-info">Средний</span>
-              {% elif pb.level == 'high' %}<span class="badge bg-warning text-dark">Высокий</span>
-              {% else %}<span class="badge bg-primary">Топовый</span>{% endif %}
+              {% if pb.level %}<span class="badge {{ pb.level.color }}">{{ pb.level.name }}</span>{% endif %}
             </div>
             <h5 class="fw-bold mb-2">{{ pb.name }}</h5>
             <p class="small flex-grow-1" style="color:var(--text-3)">{{ pb.description|truncatechars:80 }}</p>

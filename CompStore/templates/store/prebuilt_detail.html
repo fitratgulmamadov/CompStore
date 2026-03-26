@@ -23,10 +23,7 @@
     </div>
     <div class="col-md-7">
       <div class="mb-2">
-        {% if prebuilt.level == 'budget' %}<span class="badge bg-success fs-6">Бюджетный</span>
-        {% elif prebuilt.level == 'mid' %}<span class="badge bg-info fs-6">Средний</span>
-        {% elif prebuilt.level == 'high' %}<span class="badge bg-warning text-dark fs-6">Высокий</span>
-        {% else %}<span class="badge bg-danger fs-6">Топовый</span>{% endif %}
+        {% if prebuilt.level %}<span class="badge {{ prebuilt.level.color }} fs-6">{{ prebuilt.level.name }}</span>{% endif %}
       </div>
       <h1 class="fw-bold">{{ prebuilt.name }}</h1>
       <p class="text-muted">{{ prebuilt.description }}</p>

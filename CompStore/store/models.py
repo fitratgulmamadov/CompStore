@@ -69,16 +69,26 @@ class Product(models.Model):
         return 0
 
 
+class PrebuiltLevel(models.Model):
+    name = models.CharField('Название', max_length=50)
+    color = models.CharField('Цвет бейджа (Bootstrap)', max_length=50, default='bg-secondary',
+                             help_text='Например: bg-success, bg-info, bg-warning, bg-danger')
+    order = models.PositiveIntegerField('Порядок', default=0)
+
+    class Meta:
+        ordering = ['order']
+        verbose_name = 'Уровень сборки'
+        verbose_name_plural = 'Уровни сборок'
+
+    def __str__(self):
+        return self.name
+
+
 class PrebuiltPC(models.Model):
-    LEVEL_CHOICES = [
-        ('budget', 'Бюджетный'),
-        ('mid', 'Средний'),
-        ('high', 'Высокий'),
-        ('ultra', 'Топовый'),
-    ]
     name = models.CharField(max_length=200)
     slug = models.SlugField(unique=True, blank=True)
-    level = models.CharField(max_length=10, choices=LEVEL_CHOICES, default='mid')
+    level = models.ForeignKey(PrebuiltLevel, on_delete=models.SET_NULL, null=True, blank=True,
+                              verbose_name='Уровень')
     description = models.TextField(blank=True)
     image = models.ImageField(upload_to='prebuilts/', null=True, blank=True)
     price = models.DecimalField(max_digits=10, decimal_places=2)
