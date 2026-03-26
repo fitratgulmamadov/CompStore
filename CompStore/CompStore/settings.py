@@ -15,6 +15,9 @@ ALLOWED_HOSTS = [h.strip() for h in _hosts.split(',') if h.strip()]
 CSRF_TRUSTED_ORIGINS = ["http://185.121.2.20:84"]
 
 INSTALLED_APPS = [
+    'admin_interface',
+    'colorfield',
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -23,6 +26,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'store',
 ]
+
+
+X_FRAME_OPTIONS = "SAMEORIGIN"
+SILENCED_SYSTEM_CHECKS = ["security.W019"]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
