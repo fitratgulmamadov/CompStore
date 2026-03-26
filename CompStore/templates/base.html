@@ -17,6 +17,16 @@
     <a class="navbar-brand" href="{% url 'store:home' %}">
       <i class="bi bi-cpu-fill brand-icon"></i>{{ site_name|upper }}
     </a>
+    <!-- Корзина на мобильном (всегда видна) -->
+    <a class="cart-btn position-relative d-lg-none me-2" href="{% url 'store:cart' %}">
+      <i class="bi bi-bag"></i>
+      {% if cart and cart.total_items %}
+      <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill"
+            style="background:var(--accent);font-size:0.65rem">
+        {{ cart.total_items }}
+      </span>
+      {% endif %}
+    </a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
       <span class="navbar-toggler-icon"></span>
     </button>
@@ -38,7 +48,7 @@
           <button class="btn btn-primary" type="submit"><i class="bi bi-search"></i></button>
         </div>
       </form>
-      <a class="cart-btn position-relative" href="{% url 'store:cart' %}">
+      <a class="cart-btn position-relative d-none d-lg-flex" href="{% url 'store:cart' %}">
         <i class="bi bi-bag"></i>
         <span>Корзина</span>
         {% if cart and cart.total_items %}
