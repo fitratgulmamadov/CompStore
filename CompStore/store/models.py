@@ -39,7 +39,47 @@ class Product(models.Model):
     image = models.ImageField(upload_to='products/', null=True, blank=True)
     description = models.TextField(blank=True)
     specs = models.JSONField(default=dict, blank=True)
-    socket = models.CharField(max_length=50, blank=True, help_text='Для совместимости CPU/MB')
+    SOCKET_CHOICES = [
+        ('', 'Не применимо'),
+        # --- AMD ---
+        ('AM1',   'AMD AM1'),
+        ('AM2',   'AMD AM2'),
+        ('AM2+',  'AMD AM2+'),
+        ('AM3',   'AMD AM3'),
+        ('AM3+',  'AMD AM3+'),
+        ('AM4',   'AMD AM4'),
+        ('AM5',   'AMD AM5'),
+        ('FM1',   'AMD FM1'),
+        ('FM2',   'AMD FM2'),
+        ('FM2+',  'AMD FM2+'),
+        ('SP3',   'AMD SP3 (EPYC)'),
+        ('SP5',   'AMD SP5 (EPYC)'),
+        ('TR4',   'AMD TR4 (Threadripper)'),
+        ('TRX40', 'AMD TRX40 (Threadripper)'),
+        ('TRX50', 'AMD TRX50 (Threadripper)'),
+        # --- Intel ---
+        ('LGA775',  'Intel LGA775'),
+        ('LGA1150', 'Intel LGA1150'),
+        ('LGA1151', 'Intel LGA1151'),
+        ('LGA1155', 'Intel LGA1155'),
+        ('LGA1156', 'Intel LGA1156'),
+        ('LGA1200', 'Intel LGA1200'),
+        ('LGA1700', 'Intel LGA1700'),
+        ('LGA1851', 'Intel LGA1851'),
+        ('LGA2011', 'Intel LGA2011'),
+        ('LGA2011-3', 'Intel LGA2011-3'),
+        ('LGA2066', 'Intel LGA2066 (HEDT)'),
+        ('LGA4189', 'Intel LGA4189 (Xeon)'),
+        ('LGA4677', 'Intel LGA4677 (Xeon)'),
+    ]
+    RAM_TYPE_CHOICES = [
+        ('',     'Не применимо'),
+        ('DDR3', 'DDR3'),
+        ('DDR4', 'DDR4'),
+        ('DDR5', 'DDR5'),
+    ]
+    socket = models.CharField(max_length=50, blank=True, choices=SOCKET_CHOICES, help_text='Для совместимости CPU/MB')
+    ram_type = models.CharField(max_length=10, blank=True, choices=RAM_TYPE_CHOICES, help_text='Тип RAM (для MB и RAM-планок)')
     stock = models.PositiveIntegerField(default=10)
     is_featured = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)

@@ -99,25 +99,25 @@ class Command(BaseCommand):
             # RAM
             {
                 'cat': 'ram', 'brand': 'Kingston', 'name': 'FURY Beast DDR4 16GB 3200MHz',
-                'price': 507, 'is_featured': True,
+                'price': 507, 'is_featured': True, 'ram_type': 'DDR4',
                 'specs': {'Объём': '16 GB', 'Тип': 'DDR4', 'Частота': '3200 MHz', 'Тайминги': 'CL16'},
                 'description': 'Надёжная оперативная память для игровых ПК.'
             },
             {
                 'cat': 'ram', 'brand': 'Corsair', 'name': 'Vengeance DDR5 32GB 5600MHz',
-                'price': 1404,
+                'price': 1404, 'ram_type': 'DDR5',
                 'specs': {'Объём': '32 GB', 'Тип': 'DDR5', 'Частота': '5600 MHz', 'Тайминги': 'CL36'},
                 'description': 'Высокоскоростная память DDR5 нового поколения.'
             },
             {
                 'cat': 'ram', 'brand': 'G.Skill', 'name': 'Trident Z5 RGB 32GB DDR5 6000MHz',
-                'price': 1872, 'is_featured': True,
+                'price': 1872, 'is_featured': True, 'ram_type': 'DDR5',
                 'specs': {'Объём': '32 GB', 'Тип': 'DDR5', 'Частота': '6000 MHz', 'Тайминги': 'CL30'},
                 'description': 'Топовая оперативная память с RGB подсветкой.'
             },
             {
                 'cat': 'ram', 'brand': 'TeamGroup', 'name': 'T-Force Vulcan DDR4 8GB 3000MHz',
-                'price': 273,
+                'price': 273, 'ram_type': 'DDR4',
                 'specs': {'Объём': '8 GB', 'Тип': 'DDR4', 'Частота': '3000 MHz'},
                 'description': 'Бюджетная память для начального уровня.'
             },
@@ -125,25 +125,25 @@ class Command(BaseCommand):
             # Motherboards
             {
                 'cat': 'motherboard', 'brand': 'ASUS', 'name': 'ROG STRIX B550-F Gaming',
-                'price': 2496, 'socket': 'AM4', 'is_featured': True,
+                'price': 2496, 'socket': 'AM4', 'is_featured': True, 'ram_type': 'DDR4',
                 'specs': {'Сокет': 'AM4', 'Чипсет': 'B550', 'Формфактор': 'ATX', 'RAM': 'DDR4'},
                 'description': 'Геймерская материнская плата для процессоров AMD AM4.'
             },
             {
                 'cat': 'motherboard', 'brand': 'MSI', 'name': 'MAG X670E Tomahawk WiFi',
-                'price': 4290, 'socket': 'AM5',
+                'price': 4290, 'socket': 'AM5', 'ram_type': 'DDR5',
                 'specs': {'Сокет': 'AM5', 'Чипсет': 'X670E', 'Формфактор': 'ATX', 'RAM': 'DDR5'},
                 'description': 'Топовая плата для процессоров AMD Ryzen 7000.'
             },
             {
                 'cat': 'motherboard', 'brand': 'Gigabyte', 'name': 'Z790 AORUS Elite AX',
-                'price': 3744, 'socket': 'LGA1700',
+                'price': 3744, 'socket': 'LGA1700', 'ram_type': 'DDR5',
                 'specs': {'Сокет': 'LGA1700', 'Чипсет': 'Z790', 'Формфактор': 'ATX', 'RAM': 'DDR5'},
                 'description': 'Плата для процессоров Intel 12/13 поколения.'
             },
             {
                 'cat': 'motherboard', 'brand': 'ASRock', 'name': 'B450M Pro4',
-                'price': 936, 'socket': 'AM4',
+                'price': 936, 'socket': 'AM4', 'ram_type': 'DDR4',
                 'specs': {'Сокет': 'AM4', 'Чипсет': 'B450', 'Формфактор': 'Micro-ATX', 'RAM': 'DDR4'},
                 'description': 'Бюджетная плата для сборки на AM4.'
             },
@@ -259,6 +259,7 @@ class Command(BaseCommand):
                     'price': data['price'],
                     'old_price': data.get('old_price'),
                     'socket': data.get('socket', ''),
+                    'ram_type': data.get('ram_type', ''),
                     'specs': data.get('specs', {}),
                     'description': data.get('description', ''),
                     'is_featured': data.get('is_featured', False),

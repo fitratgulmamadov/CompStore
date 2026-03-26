@@ -101,6 +101,7 @@ def builder(request):
                 'brand': p.brand,
                 'price': float(p.price),
                 'socket': p.socket,
+                'ram_type': p.ram_type,
                 'specs': p.specs,
             }
             for p in Product.objects.filter(category=cat)

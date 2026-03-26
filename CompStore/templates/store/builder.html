@@ -357,29 +357,45 @@ function updateSummary() {
 
 function checkCompatibility() {
   const cpu = selected['cpu'];
-  const mb = selected['motherboard'];
+  const mb  = selected['motherboard'];
+  const ram = selected['ram'];
   const status = document.getElementById('compat-status');
+  const errors = [];
 
-  if (cpu && mb) {
-    if (cpu.socket && mb.socket && cpu.socket !== mb.socket) {
-      status.style.borderColor = 'var(--accent)';
-      status.style.color = '#ff6b6b';
-      status.innerHTML = `<i class="bi bi-x-circle me-1"></i>Несовместимость: CPU сокет ${cpu.socket} ≠ MB сокет ${mb.socket}`;
-      document.querySelector('.builder-slot[data-type="cpu"] .slot-compat-warning').classList.remove('d-none');
-      document.querySelector('.builder-slot[data-type="cpu"] .slot-compat-warning span').textContent = `Сокет ${cpu.socket} несовместим с материнской платой`;
-      document.querySelector('.builder-slot[data-type="motherboard"] .slot-compat-warning').classList.remove('d-none');
-      document.querySelector('.builder-slot[data-type="motherboard"] .slot-compat-warning span').textContent = `Сокет ${mb.socket} несовместим с процессором`;
-    } else {
-      status.style.borderColor = '#28a745';
-      status.style.color = '#51cf66';
-      status.innerHTML = `<i class="bi bi-check-circle me-1"></i>Совместимость подтверждена`;
-      document.querySelectorAll('.slot-compat-warning').forEach(el => el.classList.add('d-none'));
-    }
-  } else {
+  document.querySelectorAll('.slot-compat-warning').forEach(el => el.classList.add('d-none'));
+
+  if (cpu && mb && cpu.socket && mb.socket && cpu.socket !== mb.socket) {
+    errors.push(`Сокет CPU (${cpu.socket}) не совпадает с сокетом MB (${mb.socket})`);
+    showSlotWarning('cpu', `Сокет ${cpu.socket} несовместим с материнской платой`);
+    showSlotWarning('motherboard', `Сокет ${mb.socket} несовместим с процессором`);
+  }
+
+  if (mb && ram && mb.ram_type && ram.ram_type && mb.ram_type !== ram.ram_type) {
+    errors.push(`Тип памяти RAM (${ram.ram_type}) не поддерживается материнской платой (${mb.ram_type})`);
+    showSlotWarning('motherboard', `Плата поддерживает ${mb.ram_type}, а выбрана ${ram.ram_type}`);
+    showSlotWarning('ram', `${ram.ram_type} несовместима с этой материнской платой`);
+  }
+
+  if (!cpu && !mb) {
     status.style.borderColor = 'var(--border)';
     status.style.color = 'var(--text-3)';
     status.innerHTML = `<i class="bi bi-info-circle me-1"></i>Добавьте процессор и материнскую плату`;
-    document.querySelectorAll('.slot-compat-warning').forEach(el => el.classList.add('d-none'));
+  } else if (errors.length) {
+    status.style.borderColor = '#ff6b6b';
+    status.style.color = '#ff6b6b';
+    status.innerHTML = `<i class="bi bi-x-circle me-1"></i>` + errors.join('<br><i class="bi bi-x-circle me-1"></i>');
+  } else {
+    status.style.borderColor = '#28a745';
+    status.style.color = '#51cf66';
+    status.innerHTML = `<i class="bi bi-check-circle me-1"></i>Совместимость подтверждена`;
+  }
+}
+
+function showSlotWarning(type, text) {
+  const warning = document.querySelector(`.builder-slot[data-type="${type}"] .slot-compat-warning`);
+  if (warning) {
+    warning.classList.remove('d-none');
+    warning.querySelector('span').textContent = text;
   }
 }
 
