@@ -32,7 +32,7 @@ body {
 /* Bootstrap overrides */
 .bg-light { background: var(--surface) !important; }
 .bg-dark  { background: var(--bg) !important; }
-.text-muted { color: var(--text-3) !important; }
+.text-muted { color: var(--text-2) !important; }
 .text-dark  { color: var(--text) !important; }
 
 /* ========== Navbar ========== */
@@ -482,13 +482,14 @@ body {
 /* ========== Tables ========== */
 .table {
   color: var(--text);
+  --bs-table-color: var(--text);
   --bs-table-bg: transparent;
   --bs-table-striped-bg: rgba(255,255,255,0.02);
   --bs-table-hover-bg: rgba(229, 0, 26, 0.05);
   --bs-table-border-color: var(--border);
 }
 
-.table td, .table th { vertical-align: middle; border-color: var(--border); }
+.table td, .table th { vertical-align: middle; border-color: var(--border); color: var(--text); }
 
 .table-dark {
   --bs-table-bg: var(--surface);
@@ -497,6 +498,7 @@ body {
 
 .table-light {
   --bs-table-bg: var(--surface);
+  --bs-table-color: var(--text-2);
   --bs-table-border-color: var(--border);
   color: var(--text-2);
 }
@@ -508,6 +510,9 @@ body {
 
 /* ========== Badges ========== */
 .badge.bg-primary { background: var(--accent) !important; }
+.badge.bg-info    { color: #fff !important; }
+.badge.bg-warning { color: #fff !important; }
+.badge.bg-success { color: #fff !important; }
 
 /* ========== Breadcrumb ========== */
 .breadcrumb { margin-bottom: 0; }
