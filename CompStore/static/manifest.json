@@ -1,0 +1,42 @@
+{
+  "name": "CompStore — Магазин комплектующих",
+  "short_name": "CompStore",
+  "description": "Магазин компьютерных комплектующих. Большой выбор, доступные цены.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0a0a",
+  "theme_color": "#e5001a",
+  "orientation": "portrait-primary",
+  "lang": "ru",
+  "icons": [
+    {
+      "src": "/static/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/static/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Каталог",
+      "url": "/catalog/",
+      "description": "Все товары"
+    },
+    {
+      "name": "Корзина",
+      "url": "/cart/",
+      "description": "Моя корзина"
+    },
+    {
+      "name": "Конфигуратор",
+      "url": "/builder/",
+      "description": "Собрать ПК"
+    }
+  ]
+}
