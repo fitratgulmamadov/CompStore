@@ -4,7 +4,8 @@ from datetime import timedelta
 from django.contrib import admin
 from django.db.models import Count, Sum
 from django.utils import timezone
-from unfold.admin import ModelAdmin, TabularInline
+from unfold.admin import ModelAdmin
+from unfold.admin import TabularInline as UnfoldTabularInline  # noqa: F401
 
 from .models import (
     Category, Product, PrebuiltPC, PrebuiltComponent,
@@ -74,16 +75,24 @@ def dashboard_callback(request, context):
 
 # ── Inlines ─────────────────────────────────────────────────────────────────
 
-class PrebuiltComponentInline(TabularInline):
+class PrebuiltComponentInline(UnfoldTabularInline):
     model = PrebuiltComponent
     extra = 1
     autocomplete_fields = ['product']
 
 
-class OrderItemInline(TabularInline):
+class OrderItemInline(admin.TabularInline):
     model = OrderItem
     extra = 0
-    readonly_fields = ('product_name', 'price', 'quantity', 'subtotal')
+    fields = ('product_name', 'price', 'quantity', 'get_subtotal')
+    readonly_fields = ('product_name', 'price', 'quantity', 'get_subtotal')
+    can_delete = False
+
+    @admin.display(description='Сумма')
+    def get_subtotal(self, obj):
+        if obj.pk and obj.price is not None:
+            return obj.subtotal
+        return '—'
 
 
 # ── ModelAdmin classes ───────────────────────────────────────────────────────
