@@ -1,0 +1,237 @@
+{% extends "admin/change_list.html" %}
+
+{% block extrahead %}
+{{ block.super }}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+  .visit-stats-wrap { margin-bottom: 24px; }
+
+  .stat-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .stat-card {
+    background: var(--darkened-bg, #1e1e2e);
+    border: 1px solid var(--border-color, #333);
+    border-radius: 8px;
+    padding: 16px;
+    text-align: center;
+  }
+
+  .stat-card .stat-value {
+    font-size: 2rem;
+    font-weight: 800;
+    line-height: 1;
+    color: var(--link-fg, #79aec8);
+  }
+
+  .stat-card .stat-value.accent { color: #e5001a; }
+
+  .stat-card .stat-label {
+    font-size: 0.75rem;
+    color: var(--secondary, #999);
+    margin-top: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .visit-chart-wrap {
+    background: var(--darkened-bg, #1e1e2e);
+    border: 1px solid var(--border-color, #333);
+    border-radius: 8px;
+    padding: 20px 20px 12px;
+    margin-bottom: 20px;
+  }
+
+  .visit-chart-title {
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--secondary, #999);
+    margin-bottom: 14px;
+  }
+
+  .top-pages-wrap {
+    background: var(--darkened-bg, #1e1e2e);
+    border: 1px solid var(--border-color, #333);
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+
+  .top-pages-wrap table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+  }
+
+  .top-pages-wrap th {
+    font-size: 0.7rem;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--secondary, #999);
+    padding: 0 0 10px;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color, #333);
+  }
+
+  .top-pages-wrap td {
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border-color, #222);
+    color: var(--body-fg, #ddd);
+  }
+
+  .top-pages-wrap td:last-child { text-align: right; color: #e5001a; font-weight: 700; }
+
+  .bar-cell { display: flex; align-items: center; gap: 10px; }
+
+  .bar-bg {
+    flex: 1;
+    height: 6px;
+    background: var(--border-color, #333);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .bar-fill {
+    height: 100%;
+    background: #e5001a;
+    border-radius: 3px;
+    transition: width 0.4s ease;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="visit-stats-wrap">
+
+  <!-- Карточки -->
+  <div class="stat-cards">
+    <div class="stat-card">
+      <div class="stat-value accent">{{ visit_stats.today }}</div>
+      <div class="stat-label">Сегодня</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">{{ visit_stats.yesterday }}</div>
+      <div class="stat-label">Вчера</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">{{ visit_stats.week }}</div>
+      <div class="stat-label">7 дней</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">{{ visit_stats.month }}</div>
+      <div class="stat-label">30 дней</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">{{ visit_stats.unique_today }}</div>
+      <div class="stat-label">Уник. сегодня</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">{{ visit_stats.unique_week }}</div>
+      <div class="stat-label">Уник. за 7 дн.</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">{{ visit_stats.total }}</div>
+      <div class="stat-label">Всего</div>
+    </div>
+  </div>
+
+  <!-- График -->
+  <div class="visit-chart-wrap">
+    <div class="visit-chart-title">Посещения за 14 дней</div>
+    <canvas id="visitsChart" height="70"></canvas>
+  </div>
+
+  <!-- Топ страниц -->
+  {% if top_pages %}
+  <div class="top-pages-wrap">
+    <div class="visit-chart-title" style="margin-bottom:14px">Топ страниц за 7 дней</div>
+    {% with top_pages.0.cnt as max_cnt %}
+    <table>
+      <thead>
+        <tr>
+          <th style="width:40px">#</th>
+          <th>Страница</th>
+          <th style="width:200px">Популярность</th>
+          <th style="width:70px">Визиты</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for page in top_pages %}
+        <tr>
+          <td style="color:var(--secondary,#999)">{{ forloop.counter }}</td>
+          <td><code style="font-size:0.8rem;color:var(--body-fg,#ddd)">{{ page.path }}</code></td>
+          <td>
+            <div class="bar-cell">
+              <div class="bar-bg">
+                <div class="bar-fill" style="width:{% widthratio page.cnt max_cnt 100 %}%"></div>
+              </div>
+            </div>
+          </td>
+          <td>{{ page.cnt }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% endwith %}
+  </div>
+  {% endif %}
+
+</div>
+
+{{ block.super }}
+
+<script>
+(function () {
+  const labels = {{ chart_labels|safe }};
+  const data   = {{ chart_data|safe }};
+  const ctx    = document.getElementById('visitsChart');
+  if (!ctx) return;
+
+  new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [{
+        label: 'Посещения',
+        data,
+        borderColor: '#e5001a',
+        backgroundColor: 'rgba(229,0,26,0.08)',
+        borderWidth: 2,
+        pointRadius: 4,
+        pointBackgroundColor: '#e5001a',
+        fill: true,
+        tension: 0.3,
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: ctx => ' ' + ctx.parsed.y + ' визитов',
+          }
+        }
+      },
+      scales: {
+        x: {
+          ticks: { color: '#888', font: { size: 11 } },
+          grid:  { color: 'rgba(255,255,255,0.05)' },
+        },
+        y: {
+          beginAtZero: true,
+          ticks: { color: '#888', font: { size: 11 }, stepSize: 1 },
+          grid:  { color: 'rgba(255,255,255,0.05)' },
+        }
+      }
+    }
+  });
+})();
+</script>
+{% endblock %}

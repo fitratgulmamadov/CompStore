@@ -14,22 +14,23 @@
 <!-- Navbar -->
 <nav class="navbar navbar-expand-lg sticky-top">
   <div class="container">
+    <!-- Бургер слева (только мобильный) -->
+    <button class="burger-btn d-lg-none me-2" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-expanded="false" aria-label="Меню">
+      <span class="burger-line"></span>
+      <span class="burger-line"></span>
+      <span class="burger-line"></span>
+    </button>
+    <!-- Лого -->
     <a class="navbar-brand" href="{% url 'store:home' %}">
       <i class="bi bi-cpu-fill brand-icon"></i>{{ site_name|upper }}
     </a>
-    <!-- Корзина на мобильном (всегда видна) -->
-    <a class="cart-btn position-relative d-lg-none me-2" href="{% url 'store:cart' %}">
-      <i class="bi bi-bag"></i>
+    <!-- Корзина справа на мобильном -->
+    <a class="mobile-cart-btn d-lg-none ms-auto position-relative" href="{% url 'store:cart' %}">
+      <i class="bi bi-cart-fill"></i>
       {% if cart and cart.total_items %}
-      <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill"
-            style="background:var(--accent);font-size:0.65rem">
-        {{ cart.total_items }}
-      </span>
+      <span class="mobile-cart-badge">{{ cart.total_items }}</span>
       {% endif %}
     </a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-      <span class="navbar-toggler-icon"></span>
-    </button>
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav me-auto">
         <li class="nav-item">
@@ -42,9 +43,9 @@
           <a class="nav-link" href="{% url 'store:builder' %}">Конфигуратор</a>
         </li>
       </ul>
-      <form class="d-flex me-3" action="{% url 'store:search' %}" method="get">
+      <form class="d-flex me-3 navbar-search-form" action="{% url 'store:search' %}" method="get">
         <div class="input-group input-group-sm">
-          <input class="form-control" type="search" name="q" placeholder="Поиск..." style="width:200px">
+          <input class="form-control navbar-search-input" type="search" name="q" placeholder="Поиск товаров..." style="width:200px">
           <button class="btn btn-primary" type="submit"><i class="bi bi-search"></i></button>
         </div>
       </form>

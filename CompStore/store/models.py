@@ -247,3 +247,20 @@ class OrderItem(models.Model):
     class Meta:
         verbose_name = 'Элемент заказа'
         verbose_name_plural = 'Элементы заказа'
+
+
+class PageVisit(models.Model):
+    path = models.CharField('Страница', max_length=500)
+    session_key = models.CharField('Сессия', max_length=40, blank=True)
+    ip_address = models.GenericIPAddressField('IP-адрес', null=True, blank=True)
+    user_agent = models.CharField('User Agent', max_length=300, blank=True)
+    referer = models.CharField('Источник', max_length=500, blank=True)
+    created_at = models.DateTimeField('Время', auto_now_add=True)
+
+    class Meta:
+        verbose_name = 'Посещение'
+        verbose_name_plural = 'Статистика посещений'
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f'{self.path} — {self.created_at:%d.%m.%Y %H:%M}'
