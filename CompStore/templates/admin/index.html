@@ -1,0 +1,145 @@
+{% extends "unfold/layouts/base_simple.html" %}
+{% load i18n %}
+
+{% block breadcrumbs %}{% endblock %}
+
+{% block content %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+<style>
+  .cs-card {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .dark .cs-card {
+    background: #1f2937;
+    border-color: #374151;
+  }
+  .cs-card-value {
+    font-size: 2rem;
+    font-weight: 800;
+    line-height: 1;
+    color: #111827;
+  }
+  .dark .cs-card-value {
+    color: #f9fafb;
+  }
+  .cs-card-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #9ca3af;
+  }
+  .dark .cs-card-label {
+    color: #6b7280;
+  }
+  .cs-chart-wrap {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 24px;
+  }
+  .dark .cs-chart-wrap {
+    background: #1f2937;
+    border-color: #374151;
+  }
+  .cs-chart-title {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #9ca3af;
+    margin-bottom: 16px;
+  }
+  .dark .cs-chart-title {
+    color: #6b7280;
+  }
+  .cs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+    gap: 14px;
+    margin-bottom: 24px;
+  }
+</style>
+
+<!-- KPI Cards -->
+<div class="cs-grid">
+  {% for kpi in kpi %}
+  <div class="cs-card">
+    <span class="material-symbols-outlined" style="font-size:1.4rem;color:rgb(229,0,26)">{{ kpi.icon }}</span>
+    <div class="cs-card-value">{{ kpi.value }}</div>
+    <div class="cs-card-label">{{ kpi.label }}</div>
+  </div>
+  {% endfor %}
+</div>
+
+<!-- Orders by status -->
+<div class="cs-chart-wrap" style="margin-bottom:24px">
+  <div class="cs-chart-title">Заказы по статусам</div>
+  <div style="display:flex;flex-wrap:wrap;gap:12px">
+    {% for s in order_statuses %}
+    <a href="{{ s.link }}" style="flex:1;min-width:120px;text-decoration:none;
+        display:flex;flex-direction:column;gap:6px;padding:14px 16px;border-radius:10px;
+        background:{{ s.color }}18;border:1px solid {{ s.color }}44;transition:opacity 0.2s"
+        onmouseover="this.style.opacity='.8'" onmouseout="this.style.opacity='1'">
+      <div style="font-size:1.6rem;font-weight:800;color:{{ s.color }};line-height:1">{{ s.count }}</div>
+      <div style="display:flex;align-items:center;gap:6px">
+        <span style="width:8px;height:8px;border-radius:50%;background:{{ s.color }};flex-shrink:0"></span>
+        <span style="font-size:0.72rem;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:{{ s.color }}">{{ s.label }}</span>
+      </div>
+    </a>
+    {% endfor %}
+  </div>
+</div>
+
+<!-- Chart -->
+<div class="cs-chart-wrap">
+  <div class="cs-chart-title">Посещения за 14 дней</div>
+  <canvas id="dashChart" height="60"></canvas>
+</div>
+
+<script>
+(function () {
+  const labels = {{ chart_labels|safe }};
+  const data   = {{ chart_data|safe }};
+  const isDark = document.documentElement.classList.contains('dark');
+  const grid   = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)';
+  const tick   = isDark ? '#6b7280' : '#9ca3af';
+
+  new Chart(document.getElementById('dashChart'), {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [{
+        label: 'Посещения',
+        data,
+        borderColor: 'rgb(229,0,26)',
+        backgroundColor: 'rgba(229,0,26,0.08)',
+        borderWidth: 2,
+        pointRadius: 4,
+        pointBackgroundColor: 'rgb(229,0,26)',
+        fill: true,
+        tension: 0.35,
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: false },
+        tooltip: { callbacks: { label: c => ' ' + c.parsed.y + ' визитов' } }
+      },
+      scales: {
+        x: { ticks: { color: tick, font: { size: 11 } }, grid: { color: grid } },
+        y: { beginAtZero: true, ticks: { color: tick, font: { size: 11 }, stepSize: 1 }, grid: { color: grid } }
+      }
+    }
+  });
+})();
+</script>
+{% endblock %}

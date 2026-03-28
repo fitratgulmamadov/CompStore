@@ -15,8 +15,8 @@ ALLOWED_HOSTS = [h.strip() for h in _hosts.split(',') if h.strip()]
 
 
 INSTALLED_APPS = [
-    'admin_interface',
-    'colorfield',
+    'unfold',
+    'unfold.contrib.filters',
 
     'django.contrib.admin',
     'django.contrib.auth',
@@ -26,6 +26,74 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'store',
 ]
+
+UNFOLD = {
+    "SITE_TITLE": "CompStore",
+    "SITE_HEADER": "CompStore",
+    "SITE_URL": "/",
+    "SITE_SYMBOL": "memory",
+    "SHOW_HISTORY": True,
+    "SHOW_VIEW_ON_SITE": True,
+    "DASHBOARD_CALLBACK": "store.admin.dashboard_callback",
+    "COLORS": {
+        "font": {
+            "subtle-light": "107 114 128",
+            "subtle-dark":  "156 163 175",
+            "default-light": "75 85 99",
+            "default-dark":  "209 213 219",
+            "important-light": "17 24 39",
+            "important-dark":  "243 244 246",
+        },
+        "primary": {
+            "50":  "255 242 242",
+            "100": "255 220 220",
+            "200": "255 180 180",
+            "300": "255 130 130",
+            "400": "255 70 70",
+            "500": "229 0 26",
+            "600": "200 0 20",
+            "700": "170 0 15",
+            "800": "130 0 10",
+            "900": "90 0 7",
+            "950": "60 0 5",
+        },
+    },
+    "SIDEBAR": {
+        "show_search": True,
+        "show_all_applications": True,
+        "navigation": [
+            {
+                "title": "Магазин",
+                "items": [
+                    {"title": "Товары",         "icon": "memory",        "link": "/admin/store/product/"},
+                    {"title": "Категории",      "icon": "category",      "link": "/admin/store/category/"},
+                    {"title": "Готовые сборки", "icon": "desktop_windows","link": "/admin/store/prebuiltpc/"},
+                    {"title": "Уровни сборок",  "icon": "bar_chart",     "link": "/admin/store/prebuiltlevel/"},
+                ],
+            },
+            {
+                "title": "Заказы",
+                "items": [
+                    {"title": "Заказы",  "icon": "shopping_bag", "link": "/admin/store/order/"},
+                    {"title": "Корзины", "icon": "shopping_cart", "link": "/admin/store/cart/"},
+                ],
+            },
+            {
+                "title": "Аналитика",
+                "items": [
+                    {"title": "Посещаемость", "icon": "analytics", "link": "/admin/store/pagevisit/"},
+                ],
+            },
+            {
+                "title": "Система",
+                "items": [
+                    {"title": "Пользователи", "icon": "person",  "link": "/admin/auth/user/"},
+                    {"title": "Группы",       "icon": "group",   "link": "/admin/auth/group/"},
+                ],
+            },
+        ],
+    },
+}
 
 
 X_FRAME_OPTIONS = "SAMEORIGIN"
@@ -75,6 +143,10 @@ AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
     {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
+
+# Доверять заголовкам от Nginx-прокси
+USE_X_FORWARDED_HOST = True
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 LANGUAGE_CODE = 'ru-ru'
 TIME_ZONE = 'Asia/Tashkent'
