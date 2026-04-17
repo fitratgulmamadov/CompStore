@@ -15,7 +15,7 @@
   </nav>
 
   <div class="row g-4">
-    <!-- Image -->
+    <!-- Изображение -->
     <div class="col-md-5">
       <div class="card">
         {% if product.image %}
@@ -28,41 +28,28 @@
       </div>
     </div>
 
-    <!-- Info -->
+    <!-- Информация -->
     <div class="col-md-7">
       <span class="badge bg-primary mb-2">{{ product.category.name }}</span>
       <h1 class="h2 fw-bold mb-1">{{ product.name }}</h1>
       <p class="text-muted mb-3">Бренд: <strong>{{ product.brand }}</strong></p>
 
+      {% if product.best_price %}
       <div class="mb-3">
-        <span class="fs-2 fw-bold" style="color:var(--accent)">{{ product.price|floatformat:0 }} сомони</span>
-        {% if product.old_price %}
-        <span class="fs-5 text-muted text-decoration-line-through ms-2">{{ product.old_price|floatformat:0 }} сомони</span>
-        <span class="badge bg-danger ms-2">-{{ product.discount_percent }}%</span>
-        {% endif %}
+        <span class="fs-2 fw-bold" style="color:var(--accent)">{{ product.best_price|floatformat:0 }} сомони</span>
       </div>
-
-      {% if product.stock > 0 %}
-      <p class="text-success mb-3"><i class="bi bi-check-circle me-1"></i>В наличии ({{ product.stock }} шт.)</p>
-      {% else %}
-      <p class="text-danger mb-3"><i class="bi bi-x-circle me-1"></i>Нет в наличии</p>
-      {% endif %}
-
+      {% if product.best_listing_id %}
       <form action="{% url 'store:cart_add' %}" method="post" class="mb-4">
         {% csrf_token %}
-        <input type="hidden" name="product_id" value="{{ product.id }}">
+        <input type="hidden" name="listing_id" value="{{ product.best_listing_id }}">
+        <input type="hidden" name="quantity" value="1">
         <input type="hidden" name="next" value="{{ request.path }}">
-        <div class="d-flex gap-2 align-items-center">
-          <div class="input-group" style="width:130px">
-            <button type="button" class="btn btn-outline-secondary" onclick="changeQty(-1)">-</button>
-            <input type="number" name="quantity" id="qty" value="1" min="1" max="{{ product.stock }}" class="form-control text-center">
-            <button type="button" class="btn btn-outline-secondary" onclick="changeQty(1)">+</button>
-          </div>
-          <button type="submit" class="btn btn-primary px-4" {% if not product.stock %}disabled{% endif %}>
-            <i class="bi bi-cart-plus me-2"></i>В корзину
-          </button>
-        </div>
+        <button type="submit" class="btn btn-primary px-5">
+          <i class="bi bi-cart-plus me-2"></i>В корзину
+        </button>
       </form>
+      {% endif %}
+      {% endif %}
 
       {% if product.description %}
       <div class="mb-4">
@@ -71,9 +58,8 @@
       </div>
       {% endif %}
 
-      <!-- Specs -->
       {% if product.specs %}
-      <div class="card">
+      <div class="card mb-4">
         <div class="card-header fw-bold" style="background:var(--surface);border-bottom:1px solid var(--border);font-size:0.75rem;letter-spacing:2px;text-transform:uppercase;color:var(--text-2)">
           <i class="bi bi-list-ul me-2"></i>Характеристики
         </div>
@@ -92,7 +78,14 @@
     </div>
   </div>
 
-  <!-- Related -->
+  {% if not product.best_listing_id %}
+  <div class="mt-4 text-center py-4" style="background:var(--surface);border-radius:8px;border:1px solid var(--border)">
+    <i class="bi bi-box-seam fs-2 text-muted"></i>
+    <p class="text-muted mt-2 mb-0">Нет в наличии</p>
+  </div>
+  {% endif %}
+
+  <!-- Похожие товары -->
   {% if related %}
   <div class="mt-5">
     <h4 class="fw-bold mb-3">Похожие товары</h4>
@@ -108,15 +101,4 @@
   </div>
   {% endif %}
 </div>
-
-{% block extra_js %}
-<script>
-function changeQty(delta) {
-  const input = document.getElementById('qty');
-  const val = parseInt(input.value) + delta;
-  const max = parseInt(input.max);
-  if (val >= 1 && val <= max) input.value = val;
-}
-</script>
-{% endblock %}
 {% endblock %}

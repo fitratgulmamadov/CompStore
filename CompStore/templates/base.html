@@ -42,6 +42,9 @@
         <li class="nav-item">
           <a class="nav-link" href="{% url 'store:builder' %}">Конфигуратор</a>
         </li>
+        <li class="nav-item d-lg-none">
+          <a class="nav-link" href="{% url 'store:my_orders' %}"><i class="bi bi-receipt me-1"></i>Мои заказы</a>
+        </li>
       </ul>
       <form class="d-flex me-3 navbar-search-form" action="{% url 'store:search' %}" method="get">
         <div class="input-group input-group-sm">
@@ -49,6 +52,10 @@
           <button class="btn btn-primary" type="submit"><i class="bi bi-search"></i></button>
         </div>
       </form>
+      <a class="cart-btn d-none d-lg-flex me-1" href="{% url 'store:my_orders' %}">
+        <i class="bi bi-receipt"></i>
+        <span>Мои заказы</span>
+      </a>
       <a class="cart-btn position-relative d-none d-lg-flex" href="{% url 'store:cart' %}">
         <i class="bi bi-bag"></i>
         <span>Корзина</span>

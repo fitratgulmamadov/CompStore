@@ -1,26 +1,57 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 from django.contrib import messages
-from django.db.models import Q
+from django.db.models import Q, Subquery, OuterRef
 import json
 
-from .models import Category, Product, PrebuiltPC, PrebuiltLevel, Cart, CartItem, Order, OrderItem
+from .models import Category, Product, SellerListing, PrebuiltPC, PrebuiltLevel, Cart, CartItem, Order, OrderItem
 
+
+# ── Queryset helper ───────────────────────────────────────────────────────────
+
+def _active_listings_subq(**extra_filters):
+    return SellerListing.objects.filter(
+        product=OuterRef('pk'),
+        is_active=True,
+        is_approved=True,
+        stock__gt=0,
+        **extra_filters,
+    ).order_by('price')
+
+
+def with_best_price(qs):
+    """Аннотирует queryset товаров лучшей ценой (минимум среди одобренных активных предложений)."""
+    active = _active_listings_subq()
+    return qs.annotate(
+        best_price=Subquery(active.values('price')[:1]),
+        best_listing_id=Subquery(active.values('id')[:1]),
+        best_old_price=Subquery(active.values('old_price')[:1]),
+    )
+
+
+def available_products(qs=None):
+    """Товары из номенклатуры, у которых есть хотя бы одно активное одобренное предложение."""
+    if qs is None:
+        qs = Product.objects.select_related('category')
+    return with_best_price(qs).filter(best_price__isnull=False)
+
+
+# ── Cart helper ───────────────────────────────────────────────────────────────
 
 def get_or_create_cart(request):
     if not request.session.session_key:
         request.session.create()
-    session_key = request.session.session_key
-    cart, _ = Cart.objects.get_or_create(session_key=session_key)
+    cart, _ = Cart.objects.get_or_create(session_key=request.session.session_key)
     return cart
 
 
+# ── Views ─────────────────────────────────────────────────────────────────────
+
 def home(request):
     categories = Category.objects.all()
-    featured_products = Product.objects.filter(is_featured=True).select_related('category')[:8]
+    featured_products = available_products().filter(is_featured=True)[:8]
+    new_products = available_products().order_by('-created_at')[:8]
     featured_prebuilts = PrebuiltPC.objects.filter(is_featured=True)[:3]
-    new_products = Product.objects.order_by('-created_at')[:8]
     context = {
         'categories': categories,
         'featured_products': featured_products,
@@ -32,7 +63,7 @@ def home(request):
 
 def catalog(request, category_slug=None):
     categories = Category.objects.all()
-    products = Product.objects.select_related('category').all()
+    products = available_products()
     current_category = None
 
     if category_slug:
@@ -40,13 +71,13 @@ def catalog(request, category_slug=None):
         products = products.filter(category=current_category)
 
     sort = request.GET.get('sort', '-created_at')
-    sort_options = {
-        'price_asc': 'price',
-        'price_desc': '-price',
-        'name': 'name',
+    sort_map = {
+        'price_asc':  'best_price',
+        'price_desc': '-best_price',
+        'name':       'name',
         '-created_at': '-created_at',
     }
-    products = products.order_by(sort_options.get(sort, '-created_at'))
+    products = products.order_by(sort_map.get(sort, '-created_at'))
 
     context = {
         'categories': categories,
@@ -58,10 +89,20 @@ def catalog(request, category_slug=None):
 
 
 def product_detail(request, slug):
-    product = get_object_or_404(Product, slug=slug)
-    related = Product.objects.filter(category=product.category).exclude(pk=product.pk)[:4]
+    product = get_object_or_404(
+        with_best_price(Product.objects.select_related('category')),
+        slug=slug,
+    )
+    listings = (
+        SellerListing.objects
+        .filter(product=product, is_active=True, is_approved=True)
+        .select_related('seller__seller_profile')
+        .order_by('price')
+    )
+    related = available_products().filter(category=product.category).exclude(pk=product.pk)[:4]
     context = {
         'product': product,
+        'listings': listings,
         'related': related,
     }
     return render(request, 'store/product_detail.html', context)
@@ -94,17 +135,21 @@ def builder(request):
     categories = Category.objects.all()
     products_by_category = {}
     for cat in categories:
+        cat_products = with_best_price(
+            Product.objects.filter(category=cat)
+        ).filter(best_price__isnull=False)
         products_by_category[cat.type] = [
             {
                 'id': p.id,
+                'listing_id': p.best_listing_id,
                 'name': p.name,
                 'brand': p.brand,
-                'price': float(p.price),
+                'price': float(p.best_price),
                 'socket': p.socket,
                 'ram_type': p.ram_type,
                 'specs': p.specs,
             }
-            for p in Product.objects.filter(category=cat)
+            for p in cat_products
         ]
     context = {
         'categories': categories,
@@ -122,43 +167,64 @@ def cart(request):
 @require_POST
 def cart_add(request):
     cart_obj = get_or_create_cart(request)
+    listing_id = request.POST.get('listing_id')
     product_id = request.POST.get('product_id')
     prebuilt_id = request.POST.get('prebuilt_id')
     quantity = int(request.POST.get('quantity', 1))
 
-    if product_id:
-        product = get_object_or_404(Product, pk=product_id)
-        item, created = CartItem.objects.get_or_create(cart=cart_obj, product=product, prebuilt=None)
-        if not created:
-            item.quantity += quantity
-        else:
-            item.quantity = quantity
+    if listing_id:
+        listing = get_object_or_404(SellerListing, pk=listing_id, is_active=True, is_approved=True)
+        item, created = CartItem.objects.get_or_create(cart=cart_obj, listing=listing, prebuilt=None)
+        item.quantity = item.quantity + quantity if not created else quantity
         item.save()
-        messages.success(request, f'«{product.name}» добавлен в корзину.')
+        messages.success(request, f'«{listing.product.name}» добавлен в корзину.')
+
+    elif product_id:
+        # Для совместимости с конфигуратором — берём самое дешёвое предложение
+        listing = (
+            SellerListing.objects
+            .filter(product_id=product_id, is_active=True, is_approved=True)
+            .order_by('price')
+            .first()
+        )
+        if listing:
+            item, created = CartItem.objects.get_or_create(cart=cart_obj, listing=listing, prebuilt=None)
+            item.quantity = item.quantity + quantity if not created else quantity
+            item.save()
+            messages.success(request, f'«{listing.product.name}» добавлен в корзину.')
+        else:
+            messages.error(request, 'Товар недоступен.')
+
     elif prebuilt_id:
         prebuilt = get_object_or_404(PrebuiltPC, pk=prebuilt_id)
-        item, created = CartItem.objects.get_or_create(cart=cart_obj, prebuilt=prebuilt, product=None)
-        if not created:
-            item.quantity += quantity
-        else:
-            item.quantity = quantity
+        item, created = CartItem.objects.get_or_create(cart=cart_obj, prebuilt=prebuilt, listing=None)
+        item.quantity = item.quantity + quantity if not created else quantity
         item.save()
         messages.success(request, f'«{prebuilt.name}» добавлен в корзину.')
+
     elif request.POST.get('builder_items'):
         try:
             items = json.loads(request.POST.get('builder_items'))
             for item_data in items:
-                product = get_object_or_404(Product, pk=item_data['id'])
-                item, created = CartItem.objects.get_or_create(cart=cart_obj, product=product, prebuilt=None)
-                if not created:
-                    item.quantity += 1
-                item.save()
+                listing_id_b = item_data.get('listing_id') or None
+                if listing_id_b:
+                    listing = get_object_or_404(SellerListing, pk=listing_id_b, is_active=True, is_approved=True)
+                else:
+                    listing = (
+                        SellerListing.objects
+                        .filter(product_id=item_data['id'], is_active=True, is_approved=True)
+                        .order_by('price').first()
+                    )
+                if listing:
+                    item, created = CartItem.objects.get_or_create(cart=cart_obj, listing=listing, prebuilt=None)
+                    if not created:
+                        item.quantity += 1
+                    item.save()
             messages.success(request, 'Сборка добавлена в корзину!')
         except (json.JSONDecodeError, KeyError):
             pass
 
-    next_url = request.POST.get('next', '/')
-    return redirect(next_url)
+    return redirect(request.POST.get('next', '/'))
 
 
 @require_POST
@@ -197,10 +263,18 @@ def checkout(request):
             total=cart_obj.total,
             session_key=request.session.session_key,
         )
-        for item in cart_obj.items.all():
+        for item in cart_obj.items.select_related('listing__seller__seller_profile').all():
+            seller_name = ''
+            if item.listing:
+                s = item.listing.seller
+                try:
+                    seller_name = s.seller_profile.company_name or s.get_full_name() or s.username
+                except Exception:
+                    seller_name = s.username
             OrderItem.objects.create(
                 order=order,
                 product_name=item.item_name,
+                seller_name=seller_name,
                 price=item.item_price,
                 quantity=item.quantity,
             )
@@ -216,10 +290,22 @@ def order_success(request, order_id):
     return render(request, 'store/order_success.html', {'order': order})
 
 
+def my_orders(request):
+    if not request.session.session_key:
+        request.session.create()
+    orders = Order.objects.filter(session_key=request.session.session_key).prefetch_related('items')
+    return render(request, 'store/my_orders.html', {'orders': orders})
+
+
 def search(request):
     query = request.GET.get('q', '')
-    products = Product.objects.filter(
-        Q(name__icontains=query) | Q(brand__icontains=query) | Q(description__icontains=query)
-    ).select_related('category') if query else Product.objects.none()
+    if query:
+        products = available_products(
+            Product.objects.filter(
+                Q(name__icontains=query) | Q(brand__icontains=query) | Q(description__icontains=query)
+            ).select_related('category')
+        )
+    else:
+        products = Product.objects.none()
     context = {'products': products, 'query': query}
     return render(request, 'store/search.html', context)

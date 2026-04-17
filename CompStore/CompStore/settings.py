@@ -60,38 +60,8 @@ UNFOLD = {
     },
     "SIDEBAR": {
         "show_search": True,
-        "show_all_applications": True,
-        "navigation": [
-            {
-                "title": "Магазин",
-                "items": [
-                    {"title": "Товары",         "icon": "memory",        "link": "/admin/store/product/"},
-                    {"title": "Категории",      "icon": "category",      "link": "/admin/store/category/"},
-                    {"title": "Готовые сборки", "icon": "desktop_windows","link": "/admin/store/prebuiltpc/"},
-                    {"title": "Уровни сборок",  "icon": "bar_chart",     "link": "/admin/store/prebuiltlevel/"},
-                ],
-            },
-            {
-                "title": "Заказы",
-                "items": [
-                    {"title": "Заказы",  "icon": "shopping_bag", "link": "/admin/store/order/"},
-                    {"title": "Корзины", "icon": "shopping_cart", "link": "/admin/store/cart/"},
-                ],
-            },
-            {
-                "title": "Аналитика",
-                "items": [
-                    {"title": "Посещаемость", "icon": "analytics", "link": "/admin/store/pagevisit/"},
-                ],
-            },
-            {
-                "title": "Система",
-                "items": [
-                    {"title": "Пользователи", "icon": "person",  "link": "/admin/auth/user/"},
-                    {"title": "Группы",       "icon": "group",   "link": "/admin/auth/group/"},
-                ],
-            },
-        ],
+        "show_all_applications": False,
+        "navigation": "store.admin.get_sidebar_navigation",
     },
 }
 
